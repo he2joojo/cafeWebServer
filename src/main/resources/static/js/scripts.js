@@ -8,53 +8,64 @@ String.prototype.format = function() {
   });
 };
 
-$(".submit-write button[type=submit]").click(addAnswer);
-function addAnswer(e) {
+$('#btn-save').click((e) => {
 
   e.preventDefault();
 
   var queryString = $(".submit-write textarea[name='contents']").serialize();
   var url = window.location.pathname + '/reply';
-  console.log("url : " + url);
+  var articleIndex = window.location.pathname.split('articles/')[1];
+  var replyCounter = $(".qna-comment-count strong");
+
 
   $.ajax({
-    type : 'post',
-    url : url,
-    data : queryString,
-    dataType : 'json',
-    error: function () {
-      alert("error");
-    },
-    success : function (data) {
-      console.log(data);
-      var answerTemplate = $("#answerTemplate").html();
-      var template = answerTemplate.format(data.userId, data.createdTime, data.contents, data.articleId, data.id);
-      $(".qna-comment-slipp-articles").prepend(template);
-      $("textarea[name=contents]").val("");
-    },
-  });
-}
+    type: 'POST',
+    url: url,
+    data: queryString,
+    dataType: 'json',
+  }).done((data) => {
+    var answerTemplate = $("#answerTemplate").html();
+    var template = answerTemplate.format(data.userName, data.createdTime,
+        data.contents, articleIndex, data.id);
 
-$("#btn-delete").click(deleteAnswer)
-function deleteAnswer(e) {
+    $(".qna-comment-slipp-articles").append(template);
+    $("textarea[name=contents]").val("");
+
+    $(".btn-delete").last().on("click", deleteReply);
+
+    var replyCount = Number(replyCounter.text());
+    replyCounter.text(replyCount + 1);
+
+  }).fail((err) => {
+    alert(JSON.stringify(err));
+  });
+});
+
+
+$('.btn-delete').click(deleteReply)
+
+function deleteReply(e) {
 
   e.preventDefault();
 
-  var id = $("#replyId").val();
-  var url = window.location.pathname + '/' + id;
+  var replyId = e.target.dataset['replyId'];
+  var url = window.location.pathname + '/reply/' + replyId;
+
+  var replyCounter = $(".qna-comment-count strong");
 
   $.ajax({
-    type: "DELETE",
+    type: 'DELETE',
     url: url,
-    dataType: "text",
+    dataType: 'json',
   }).done((data) => {
-    if (data == "success") {
-      alert("댓글이 삭제되었습니다.");
-      e.target.closest("article").remove();
-    } else {
-      alert("다시 시도해주세요.");
-    }
-  }).fail((error) => {
-    alert("[에러발생]다시 시도해주세요.");
+    alert("댓글 삭제 완료!");
+    e.target.closest("article").remove();
+
+    var replyCount = Number(replyCounter.text());
+    replyCounter.text(replyCount - 1);
+
+  }).fail((err) => {
+    alert("댓글 삭제 실패!");
+    console.log(JSON.stringify(err));
   })
 }

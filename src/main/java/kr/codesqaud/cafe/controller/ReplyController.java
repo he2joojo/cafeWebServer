@@ -29,7 +29,7 @@ public class ReplyController {
 
         Long replyId = replyService.write(loginUser.getUserId(), loginUser.getName(), id, contents);
 
-        return new Answer(replyId,loginUser.getUserId(), id, contents);
+        return new Answer(replyId,loginUser.getName(), id, contents);
 
     }
 

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class Answer {
 
     private Long id;
-    private String userId;
+    private String userName;
     private Long articleId;
     private String contents;
     private LocalDateTime createdTime;
@@ -13,9 +13,9 @@ public class Answer {
     public Answer() {
     }
 
-    public Answer(Long id, String userId, Long articleId, String contents) {
+    public Answer(Long id, String userName, Long articleId, String contents) {
         this.id = id;
-        this.userId = userId;
+        this.userName = userName;
         this.articleId = articleId;
         this.contents = contents;
         this.createdTime = LocalDateTime.now();
@@ -29,12 +29,12 @@ public class Answer {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getArticleId() {
